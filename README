@@ -1,0 +1,83 @@
+musical genres encyclopedia
+===========================
+In early 2013, I came across the wonderful Every Noise at Once page ( http://www.furia.com/misc/genremaps/engenremap.html )
+and decided that I'd prefer to have all the content of the site listed on one page.  It was largely a labor of unix scripting 
+commands ( loops,wget,sed,cut,etc ) and  although the result takes a little while to load, it includes a list of 146 musical genres which may be expanded
+to each reveal a list of bands within that genre (most genres contain around 220 bands), each with a wiki link for the band and a song preview link which 
+may be listened to without leaving the page.
+
+The current works in project of the Musical Genres Encyclopedia can be seen here:  http://www.diegoolano.com/music-genres.html   
+
+how i made it
+=============
+here are more notes for how i made the page.  (sorry i made it over a year ago so i'm just including my command notes here)
+0) wget http://www.furia.com/misc/genremaps/engenremap.html
+1) sed -n "s/.*\(engenremap.*html\).*/\1/p" engenremap.html > links
+2) sed -n "s/.*\(http:\/\/previews.*mp3\).*/\1/p" engenremap.html > songs
+3) while read p; do wget http://www.furia.com/misc/genremaps/$p; done < links
+4)   
+   for i in engenremap-*; 
+   do 
+     fs=$( echo "$i" | cut -c 12-); 
+     echo "GENRE: $fs" >> sub$fs; 
+     f=$( echo "$i" ); 
+     LANG=de_DE.iso88591 sed -n "s/.*\(play('.*\')\).*/\1/p" $f | tr -d "')" | cut -c 6- >> sub$fs; 
+   done	
+
+5) 
+   for i in sub*; 
+   do 
+     echo "" >> allsubs; 
+     a=$( echo "$i" | rev | cut -c 6- | rev); 
+     echo "GENRE: $a" >> allsubs; tail +2 $i | sort >> allsubs; 
+   done
+
+
+6) 
+    while read i; 
+    do  
+       s=$( echo "$i" | awk '{print substr($0,1,5)}' ); 
+       if [ "$s" == "GENRE" ]; 
+         then echo "<p>$i</p>"; 
+       fi; 
+    done < allsubs
+
+7) 
+
+  while read i; 
+  do 
+    s=$( echo "$i" | awk '{print substr($0,1,5)}' ); 
+    if [ "$s" == "GENRE" ]; then
+      g=$(echo "$i" | cut -c 8-);
+      echo "<br>-------------------------------------------------</div><br><a href=\"javascript:spin('$g')\">$g + </a>( <a class='genrewiki' href='http://en.wikipedia.org/wiki/$g'>wiki</a>)<div class='header' id='$g' style='display:none'><br>-------------------------------------------------" >> page;
+    else
+      h=$( echo "$i" | cut -d "," -f2 )
+      n=$( echo "$i" | cut -d "," -f1 )
+      w="<a class='wiki' href='http://en.wikipedia.org/wiki/$n'>wiki</a>";
+      if [ "$h" == ""  ]; then
+        echo "<p>$n - $w</p>" >> page;
+      else
+        echo "<div id='$n'><span class='title'>$n</a> -<a class='link' href=\"javascript: play('$n','$h')\">listen</a>  - $w</div>" >> page;
+      fi;
+    fi; 
+  done < allsubs
+
+
+8) add play and spin functionality to page 
+var nowplaying = 0;
+
+function play(url) {
+    player = document.getElementById("player");
+    if (nowplaying = 1) {
+        player.pause();
+        nowplaying = 0;
+    } else {
+        player.src = url;
+        player.play();
+        nowplaying = 1;        
+    }
+}
+<button onclick="play(url)" >
+<audio id="player"></audio>
+
+Future work may go towards loading the page sequentially to lighten the load ( as its 24 MB big ) or organizing things 
