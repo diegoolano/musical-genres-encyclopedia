@@ -1,16 +1,26 @@
 musical genres encyclopedia
 ===========================
-In early 2013, I came across the wonderful Every Noise at Once page ( http://www.furia.com/misc/genremaps/engenremap.html )
-and decided that I'd prefer to have all the content of the site listed on one page.  It was largely a labor of unix scripting 
-commands ( loops,wget,sed,cut,etc ) and  although the result takes a little while to load, it includes a list of 146 musical genres which may be expanded
-to each reveal a list of bands within that genre (most genres contain around 220 bands), each with a wiki link for the band and a song preview link which 
-may be listened to without leaving the page.
+In early 2013, I came across the wonderful Every Noise at Once page 
+                http://www.furia.com/misc/genremaps/engenremap.html
+and decided that I'd prefer to have all the content of the site listed on one page.  
+It was largely an exercise in bash unix scripting commands (wget,sed,cut,etc) 
+and minor touchups and javascript/html additions with vim.  
 
-The current works in project of the Musical Genres Encyclopedia can be seen here:  http://www.diegoolano.com/music-genres.html   
+Although the result takes a little while to load (its heavy.  ~24MB), 
+it includes a list of 146 musical genres which may be expanded
+to each reveal a list of bands within that genre (most contain around 220 bands), 
+each with a wiki link for the band and 
+a song preview link which may be listened to without leaving the page.
+
+The current works in project of the Musical Genres Encyclopedia can be seen here:  
+http://www.diegoolano.com/music-genres.html   
 
 how i made it
 =============
-here are more notes for how i made the page.  (sorry i made it over a year ago so i'm just including my command notes here)
+Here are some technical notes on how i made the page.
+  i made it over a year ago so i'm just including the commands i jotted down, 
+  but its possible I didn't write down a few
+
 0) wget http://www.furia.com/misc/genremaps/engenremap.html
 1) sed -n "s/.*\(engenremap.*html\).*/\1/p" engenremap.html > links
 2) sed -n "s/.*\(http:\/\/previews.*mp3\).*/\1/p" engenremap.html > songs
@@ -32,7 +42,6 @@ here are more notes for how i made the page.  (sorry i made it over a year ago s
      echo "GENRE: $a" >> allsubs; tail +2 $i | sort >> allsubs; 
    done
 
-
 6) 
     while read i; 
     do  
@@ -43,7 +52,6 @@ here are more notes for how i made the page.  (sorry i made it over a year ago s
     done < allsubs
 
 7) 
-
   while read i; 
   do 
     s=$( echo "$i" | awk '{print substr($0,1,5)}' ); 
@@ -62,7 +70,6 @@ here are more notes for how i made the page.  (sorry i made it over a year ago s
     fi; 
   done < allsubs
 
-
 8) add play and spin functionality to page 
 var nowplaying = 0;
 
@@ -80,4 +87,10 @@ function play(url) {
 <button onclick="play(url)" >
 <audio id="player"></audio>
 
-Future work may go towards loading the page sequentially to lighten the load ( as its 24 MB big ) or organizing things 
+
+Future work 
+===========
+Possible expansions and improvements here:
+	1) load the page sequentially from a queue to lighten the load ( as its 24 MB big ) 
+	2) have genres open a pop up window with the list of bands in the left column, 
+		and the wiki page for the genre itself in the right handside of page.
