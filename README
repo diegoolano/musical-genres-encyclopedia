@@ -15,7 +15,6 @@ a song preview link which may be listened to without leaving the page.
 The current works in project of the Musical Genres Encyclopedia can be seen here:  
 http://www.diegoolano.com/music-genres.html   
 
-![Project Page Image](https://raw.github.com/diegoolano/musical-genres-encyclopedia/master/musical-genres.png)
 
 how i made it
 =============
@@ -93,6 +92,6 @@ function play(url) {
 Future work 
 ===========
 Possible expansions and improvements here:
-	1) load the page sequentially from a queue to lighten the load ( as its 24 MB big ) 
+	1) load the page sequentially from a queue to lighten the load ( its 24MB big ) 
 	2) have genres open a pop up window with the list of bands in the left column, 
 		and the wiki page for the genre itself in the right handside of page.
